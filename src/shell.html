@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HoldPoint QCS Companion</title>
+<meta name="description" content="QCS 2024 site companion: work sequence, ITP checklists, calculators, daily report and engineering news.">
+<meta name="theme-color" content="#15191E">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="hazard" aria-hidden="true"></div>
+  <div class="topbar">
+    <button class="iconbtn" id="backBtn" data-act="back" aria-label="Back" hidden>/*__ICON_back__*/</button>
+    <a class="brand" href="#today" aria-label="HoldPoint, go to Today"><b>Hold<i>Point</i></b><small>QCS 2024 site companion</small></a>
+    <button class="iconbtn" data-act="search" aria-label="Search">/*__ICON_search__*/</button>
+    <a class="iconbtn" href="#more" aria-label="More">/*__ICON_more__*/</a>
+  </div>
+</header>
+<main id="main" tabindex="-1"></main>
+<a class="fab" id="fab" href="#ask" hidden>/*__ICON_ask__*/<span>Ask</span></a>
+<nav class="tabs" aria-label="Main">
+  <div class="in-tabs">
+    <a href="#today" data-tab="today">/*__ICON_today__*/<span>Today</span></a>
+    <a href="#build" data-tab="build">/*__ICON_build__*/<span>Build</span></a>
+    <a href="#qcs" data-tab="qcs">/*__ICON_qcs__*/<span>QCS</span></a>
+    <a href="#checks" data-tab="checks">/*__ICON_checks__*/<span>Checks</span></a>
+    <a href="#tools" data-tab="tools">/*__ICON_tools__*/<span>Tools</span></a>
+    <a href="#news" data-tab="news">/*__ICON_news__*/<span>News</span></a>
+  </div>
+</nav>
+<div class="sheet" id="sheet" hidden><div class="panel" role="dialog" aria-modal="true" aria-label="Panel" id="sheetBody"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="native.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

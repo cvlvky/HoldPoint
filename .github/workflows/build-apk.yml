@@ -1,0 +1,98 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-apk
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      HOLDPOINT_KEYSTORE_PASSWORD: ${{ secrets.HOLDPOINT_KEYSTORE_PASSWORD || 'holdpoint-site-2026' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Check the calculators
+        run: node test/test_calc.js
+
+      - name: Build the app screens
+        run: node scripts/build.mjs
+
+      - name: Copy into the Android project
+        run: npx cap sync android
+
+      - name: Make sure Android SDK 36 is installed
+        run: |
+          SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ -x "$SDKM" ]; then yes | "$SDKM" --licenses > /dev/null || true; "$SDKM" "platforms;android-36" > /dev/null || true; fi
+
+      - name: Signing key (made once, then reused so updates install over the old app)
+        run: |
+          KS="$RUNNER_TEMP/holdpoint.jks"
+          if gh release download signing-key --pattern holdpoint.jks --dir "$RUNNER_TEMP" 2>/dev/null; then
+            echo "Using the existing signing key."
+          else
+            echo "No signing key yet: creating one."
+            keytool -genkeypair -keystore "$KS" -storepass "$HOLDPOINT_KEYSTORE_PASSWORD" -keypass "$HOLDPOINT_KEYSTORE_PASSWORD" \
+              -alias holdpoint -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=HoldPoint, O=cvlvky, C=QA"
+            gh release create signing-key "$KS" --prerelease --title "Signing key - do not delete" \
+              --notes "Keeps every HoldPoint build signed with the same key, so a new version installs over the old one and your records stay. Keep this repository private and do not delete this release."
+          fi
+          echo "HOLDPOINT_KEYSTORE=$KS" >> "$GITHUB_ENV"
+
+      - name: Build the APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+
+      - name: Name the APK
+        run: |
+          mkdir -p out
+          cp android/app/build/outputs/apk/release/app-release.apk "out/HoldPoint-1.0.${{ github.run_number }}.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HoldPoint-1.0.${{ github.run_number }}
+          path: out/*.apk
+
+      - name: Publish the release
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          V="1.0.${{ github.run_number }}"
+          {
+            echo "## Install on your phone"
+            echo "1. Tap **HoldPoint-$V.apk** below to download it."
+            echo "2. Open the file. If Android asks, allow your browser or Files app to install apps."
+            echo "3. Updates install over the old version and keep your records."
+            echo ""
+            printf 'Changes: %s\n' "$(printf '%s' "${COMMIT_MSG:-manual run}" | head -n 1)"
+          } > notes.md
+          gh release create "v$V" "out/HoldPoint-$V.apk" --title "HoldPoint $V" --notes-file notes.md --latest

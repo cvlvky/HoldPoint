@@ -1,0 +1,8 @@
+node_modules/
+www/
+out/
+*.log
+.DS_Store
+__pycache__/
+*.jks
+*.keystore

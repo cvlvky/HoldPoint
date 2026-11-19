@@ -1,0 +1,14 @@
+{
+  "appId": "com.cvlvky.holdpoint",
+  "appName": "HoldPoint",
+  "webDir": "www",
+  "backgroundColor": "#15191E",
+  "android": {
+    "backgroundColor": "#15191E"
+  },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "SystemBars": { "insetsHandling": "css", "initialViewportFitValueHint": "cover", "style": "DARK" },
+    "LocalNotifications": { "smallIcon": "ic_stat_holdpoint", "iconColor": "#FFC20E" }
+  }
+}
