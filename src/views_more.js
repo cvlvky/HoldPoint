@@ -33,7 +33,7 @@ VIEWS.more = {
 
       '<section class="card stack" style="gap:10px"><h3 class="card-t">Your records</h3><p class="small">' + plural(nI, "inspection") + " and " + plural(nR, "daily report") + ' are saved on this phone.</p>' +
         '<p class="small muted">Back up before you change phones or reinstall. The backup is a .json file you can keep in Drive or send to yourself.</p>' +
-        '<div class="row"><button class="btn" data-act="exportAll">' + ico("dl") + 'Back up</button><label class="btn file">' + ico("plus") + 'Restore<input type="file" id="impFile" accept="application/json,.json,text/plain" hidden></label></div></section>' +
+        '<div class="row"><button class="btn" data-act="exportAll">' + ico("dl") + 'Back up</button><label class="btn file">' + ico("plus") + 'Restore<input type="file" id="impFile" hidden></label></div></section>' +
 
       '<section class="card stack small" style="gap:8px"><h3 class="card-t">About HoldPoint</h3>' +
         "<p>HoldPoint turns QCS 2024 into a work sequence, ITP checklists, calculators and a daily report for site engineers. The rule cards paraphrase the QCS parts in your Google Drive, and every card carries its clause number so you can check the source.</p>" +

@@ -347,7 +347,7 @@ const Reminders = {
       const notifications = future.map((x) => {
         next += 1;
         saved.push({ id: next, at: x.at, title: x.title, body: x.body });
-        return { id: next, title: x.title, body: x.body, schedule: { at: new Date(x.at), allowWhileIdle: true }, smallIcon: "ic_stat_holdpoint", iconColor: "#FFC20E" };
+        return { id: next, title: x.title, body: x.body, schedule: { at: new Date(x.at), allowWhileIdle: true }, isExactNotification: false, smallIcon: "ic_stat_holdpoint", iconColor: "#FFC20E" };
       });
       await Native.LocalNotifications.schedule({ notifications });
       Local.set("remId", next);
