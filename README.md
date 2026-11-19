@@ -32,7 +32,7 @@ npx cap sync android
 cd android && ./gradlew assembleDebug
 ```
 
-The GitHub Actions workflow in `.github/workflows/build-apk.yml` does the same on every push. The first run creates a signing key and stores it in a private release called `signing-key`. Keep this repository private and don't delete that release, so updates keep installing over the old app.
+The GitHub Actions workflow in `.github/workflows/build-apk.yml` does the same on every push. The first run creates a signing key and keeps it in the Actions cache (never published). For a permanent key, add it as the repository secret `HOLDPOINT_KEYSTORE_B64` (base64 of a .jks with alias `holdpoint`) and its password as `HOLDPOINT_KEYSTORE_PASSWORD`.
 
 ## Layout
 

@@ -52,19 +52,36 @@ jobs:
           SDKM="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
           if [ -x "$SDKM" ]; then yes | "$SDKM" --licenses > /dev/null || true; "$SDKM" "platforms;android-36" > /dev/null || true; fi
 
-      - name: Signing key (made once, then reused so updates install over the old app)
+      - name: Restore the signing key
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.holdpoint-key
+          key: holdpoint-signing-key-v1
+
+      - name: Signing key (kept private, never published)
+        env:
+          KEY_B64: ${{ secrets.HOLDPOINT_KEYSTORE_B64 }}
         run: |
-          KS="$RUNNER_TEMP/holdpoint.jks"
-          if gh release download signing-key --pattern holdpoint.jks --dir "$RUNNER_TEMP" 2>/dev/null; then
-            echo "Using the existing signing key."
+          mkdir -p ~/.holdpoint-key
+          KS="$HOME/.holdpoint-key/holdpoint.jks"
+          if [ -n "$KEY_B64" ]; then
+            echo "$KEY_B64" | base64 -d > "$KS"; echo "Using the key from repository secrets."
+          elif [ -f "$KS" ]; then
+            echo "Using the cached signing key."
           else
-            echo "No signing key yet: creating one."
+            echo "Creating a new signing key."
             keytool -genkeypair -keystore "$KS" -storepass "$HOLDPOINT_KEYSTORE_PASSWORD" -keypass "$HOLDPOINT_KEYSTORE_PASSWORD" \
               -alias holdpoint -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=HoldPoint, O=cvlvky, C=QA"
-            gh release create signing-key "$KS" --prerelease --title "Signing key - do not delete" \
-              --notes "Keeps every HoldPoint build signed with the same key, so a new version installs over the old one and your records stay. Keep this repository private and do not delete this release."
           fi
           echo "HOLDPOINT_KEYSTORE=$KS" >> "$GITHUB_ENV"
+
+      - name: Save the signing key for the next build
+        uses: actions/cache/save@v4
+        if: always()
+        continue-on-error: true
+        with:
+          path: ~/.holdpoint-key
+          key: holdpoint-signing-key-v1
 
       - name: Build the APK
         working-directory: android
