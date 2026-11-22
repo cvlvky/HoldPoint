@@ -10,7 +10,7 @@ const OUT = path.join(ROOT, "www");
 const JS_ORDER = [
   "data_qcs.js", "data_build.js", "data_news.js", "calc.js",
   "app_core.js", "views_main.js", "views_checks.js", "views_tools.js",
-  "views_news.js", "views_report.js", "views_ask.js", "views_more.js", "boot.js"
+  "views_news.js", "views_report.js", "views_ask.js", "views_more.js", "update.js", "boot.js"
 ];
 const run = process.env.GITHUB_RUN_NUMBER;
 const VERSION = run ? "1.0." + run : "1.0.dev";

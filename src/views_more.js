@@ -39,8 +39,8 @@ VIEWS.more = {
         "<p>HoldPoint turns QCS 2024 into a work sequence, ITP checklists, calculators and a daily report for site engineers. The rule cards paraphrase the QCS parts in your Google Drive, and every card carries its clause number so you can check the source.</p>" +
         "<p>QCS 2024 is a voluntary standard unless your contract names it. The contract specification, approved method statements and the Engineer's instructions always govern. Figures marked <span class=\"tag warn\">verify</span> were read from scanned tables.</p>" +
         "<p>News comes live from Google News and publisher feeds, plus curated picks with site lessons. Weather comes from Open-Meteo.</p>" +
-        '<div class="row"><a class="btn" href="' + REPO_URL + '/releases/latest">' + ico("dl") + "Get the latest version</a></div>" +
-      "</section></div>";
+      "</section>" +
+      '<section class="card stack small" style="gap:8px"><h3 class="card-t">App updates</h3>' + Updates.panel() + "</section></div>";
   },
   mount() {
     let t;

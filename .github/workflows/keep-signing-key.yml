@@ -1,0 +1,23 @@
+# The APK signing key lives in the Actions cache (when no HOLDPOINT_KEYSTORE_B64 secret is set).
+# GitHub deletes cache entries that nobody reads for 7 days, and a lost key means new versions can no
+# longer install over the app on your phone. This job just reads the key every few days so it stays.
+name: Keep the signing key
+
+on:
+  schedule:
+    - cron: "23 4 */4 * *"
+  workflow_dispatch:
+
+jobs:
+  keep:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read the cached signing key
+        id: key
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.holdpoint-key
+          key: holdpoint-signing-key-v1
+      - name: Report
+        run: |
+          if [ "${{ steps.key.outputs.cache-hit }}" = "true" ]; then echo "Signing key is still cached."; else echo "::warning::The cached signing key was not found."; fi

@@ -105,11 +105,12 @@ jobs:
         run: |
           V="1.0.${{ github.run_number }}"
           {
-            echo "## Install on your phone"
-            echo "1. Tap **HoldPoint-$V.apk** below to download it."
-            echo "2. Open the file. If Android asks, allow your browser or Files app to install apps."
-            echo "3. Updates install over the old version and keep your records."
+            echo "## What's new"
+            printf '%s\n' "${COMMIT_MSG:-manual run}" | grep -viE '^(co-authored-by|claude-session|signed-off-by):' || true
             echo ""
-            printf 'Changes: %s\n' "$(printf '%s' "${COMMIT_MSG:-manual run}" | head -n 1)"
+            echo "## Install on your phone"
+            echo "1. Already have HoldPoint? Open it and tap **Update now** when it asks."
+            echo "2. Otherwise tap **HoldPoint-$V.apk** below to download it, then open the file."
+            echo "3. Updates install over the old version and keep your records."
           } > notes.md
           gh release create "v$V" "out/HoldPoint-$V.apk" --title "HoldPoint $V" --notes-file notes.md --latest
